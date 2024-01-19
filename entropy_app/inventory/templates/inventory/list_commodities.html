@@ -1,0 +1,40 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+
+<div class="container-box p-2">
+  <div class="position-relative">
+      <div class="position-absolute top-0 end-0">
+          <a href="{% url 'add-commodities' %}" class="btn btn-outline-success">Add Commodities</a>
+      </div>
+  </div>
+</div>
+
+<div class="container border border-secondary rounded m-2">
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Inventory</th>
+            <th scope="col">Price</th>
+            <th scope="col">Current Price</th>
+            <th scope="col">Buy Date</th>
+            <th scope="col">Total Assigned</th>
+            <th scope="col">Quantity</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for commodity in commodities %}
+          <tr>
+            <th><a href="/inventory/detail-commodities/{{commodity.id}}/">{{commodity.inventory.name}}</a></th>
+            <td>{{commodity.price}}</td>
+            <td>{{commodity.current_price}}</td>
+            <td>{{commodity.buy_date}}</td>
+            <td>{{commodity.total_assigned}}</td>
+            <td>{{commodity.quantity}}<td>
+          </tr>
+          {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

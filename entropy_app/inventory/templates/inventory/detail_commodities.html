@@ -1,0 +1,22 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+
+<div class="container-box p-2">
+  <div class="position-relative">
+      <div class="position-absolute top-0 end-0">
+          <a href="{% url 'update-commodities' commodities.id %}" class="btn btn-success">Edit</a>
+          <a href="{% url 'delete-commodities' commodities.id %}" class="btn btn-danger">Delete</a>
+      </div>
+  </div>
+</div>
+
+<div class="container m-2 border border-secondary rounded">
+    <p><strong>Inventory</strong>{{commodities.inventory.name}}</p>
+    <p><strong>Price</strong>{{commodities.price}}</p>
+    <p><strong>Current Price</strong>{{commodities.current_price}}</p>
+    <p><strong>Buy Date</strong>{{commodities.buy_date}}</p>
+    <p><strong>Total Assigned</strong>{{commodities.total_assigned}}</p>
+    <p><strong>Quantity</strong>{{commodities.quantity}}</p>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+
+<div class="container-box p-2">
+  <div class="position-relative">
+      <div class="position-absolute top-0 end-0">
+          <a href="{% url 'add-commodity' %}" class="btn btn-outline-success">Add Commodity</a>
+      </div>
+  </div>
+</div>
+
+<div class="container m-2 border border-secondary rounded">
+    <table class="table text-center">
+        <thead>
+          <tr>
+            <th scope="col">Commodity Id</th>
+            <th scope="col">Department</th>
+            <th scope="col">Assigned to</th>
+            <th scope="col">Price</th>
+            <th scope="col">Current Price</th>
+            <th scope="col">Status</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for commodity in commodities %}
+          <tr>
+            <th><a href="/inventory/detail-commodity/{{commodity.id}}/">{{commodity.id}}</a></th>
+            <td>{{commodity.commodity_name.department.name}}</td>
+            <td>{{commodity.assign_to}}</td>
+            <td>{{commodity.commodity_name.price}}</td>
+            <td>{{commodity.commodity_name.current_price}}</td>
+            <td>{{commodity.status}}</td>
+            <td>
+                <button class="btn btn-success">Edit</button>
+                <button class="btn btn-danger">Delete</button>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

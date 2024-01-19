@@ -1,0 +1,36 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+
+<div class="container-box p-2">
+    <div class="position-relative">
+        <div class="position-absolute top-0 end-0">
+            <a href="{% url 'add-inventory' %}" class="btn btn-outline-success">Add Inventory</a>
+        </div>
+    </div>
+</div>
+
+<div class="container m-2 border border-secondary rounded">
+    <table class="table text-center">
+        <thead>
+            <th>Inventory Name</th>
+            <th>Depreciation Percentage</th>
+            <th>Action</th>
+        </thead>
+
+        <tbody>
+            {% for inventory in inventories %}
+                <tr>
+                    <td><a href="/inventory/{{inventory.name}}/commodities/">{{inventory.name}}</a></td>
+                    <td>{{inventory.depreciation_percent}}</td>
+                    <td>
+                        <a href="{% url 'update-inventory' inventory.name%}" class="btn btn-success">Edit</a>
+                        <a href = "{% url 'delete-inventory' inventory.name %}" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

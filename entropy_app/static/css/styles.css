@@ -1,0 +1,13 @@
+*{
+    margin: 0px;
+    padding: 0px;
+}
+
+.tab:hover{
+    background-color: white;
+}
+
+.container-box{
+    height: 10%;
+    width: 100%;
+}
