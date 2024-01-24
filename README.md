@@ -22,6 +22,11 @@ venv\Scripts\Activate
 cd entropy_app
 ```
 
+**Download requirements**
+```bash
+pip install -r requirements.txt
+```
+
 **Move inside the folder**
 ```bash
 cd entropy_app
@@ -31,6 +36,19 @@ cd entropy_app
 ```bash
 python manage.py makemigrations
 python manage.py migrate
+```
+
+**Open python shell**
+```bash
+python manage.py shell
+```
+
+**Create fake data**
+```python
+ItemModel.create_random_data()
+InventoryModel.create_random_inventories()
+Department.create_random_departments()
+CommodityModel.create_random_commodities()
 ```
 
 **Run the project**
