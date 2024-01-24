@@ -1,9 +1,9 @@
-{% extends 'inventory/base.html' %}
+{% extends 'inventory/base2.html' %}
 
-{% block content %}
+{% block app_content %}
 
-<div class="container m-2 border border-secondary rounded">
-    <table class="table text-center">
+<div class="container mt-2 border border-secondary rounded mt-5" style="height: 80%;">
+    <table class="table text-center info-table">
         <thead>
           <tr>
             <th scope="col">Commodity Id</th>
@@ -18,11 +18,11 @@
           <tr>
             <th>{{commodity.id}}</th>
             <td>{{commodity.assign_to}}</td>
-            <td>{{commodity.commodity_name.price}}</td>
-            <td>{{commodity.commodity_name.current_price}}</td>
+            <td>{{commodity.inventory.price}}</td>
+            <td>{{commodity.inventory.current_price}}</td>
             <td>
-                <a href="{% url 'detail-commodity' commodity.id %}" class="btn btn-success">Edit</a>
-                <a href="{% url 'delete-commodity' commodity.id %}" class="btn btn-danger">Delete</button>
+                <a href="{% url 'update-commodity' commodity.id %}" class="btn btn-success buttons">Edit</a>
+                <a href="{% url 'delete-commodity' commodity.id %}" class="btn btn-danger buttons">Delete</button>
             </td>
           </tr>
           {% endfor %}

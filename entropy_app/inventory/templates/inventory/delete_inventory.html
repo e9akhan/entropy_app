@@ -1,17 +1,3 @@
-{% extends 'inventory/base.html' %}
+{% extends 'inventory/delete_item.html' %}
 
-{% block content %}
-
-<div class="h-100 d-flex align-items-center">
-    <div class="container text-center">
-        <h3>{% block header %}Delete Inventory{% endblock %}</h3>
-        <form action="" method="post">
-            {% csrf_token %}
-            
-            Do you really want to delete {{item}} <br>
-            <button class="btn btn-success">Submit</button>
-        </form>
-    </div>
-</div>
-
-{% endblock %}
+{% block header %}Delete Inventory{% endblock %}

@@ -1,110 +1,129 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.core.exceptions import ObjectDoesNotExist
+from django.utils.decorators import method_decorator
 from django.contrib import messages
-from django.views.generic import CreateView, UpdateView, ListView, DeleteView, DetailView
+from django.contrib.auth.decorators import login_required
+from django.views.generic import CreateView, UpdateView, ListView, DeleteView
 from django.contrib.messages.views import SuccessMessageMixin
-from inventory.forms import AddCommoditiesForm, CommodityForm, InventoryForm, UpdateCommoditiesForm
-from inventory.models import CommoditiesModel, CommodityModel, InventoryModel
+from django.db.models import Q
+from inventory.forms import AddInventoryForm, CommodityForm, UpdateInventoryForm, ItemForm, DepartmentForm
+from inventory.models import ItemModel, CommodityModel, InventoryModel, ItemModel, Department
 
 
 # Create your views here.
-class ListInventory(ListView):
+@method_decorator(login_required(login_url='accounts:login'), name='dispatch')
+class ListItem(ListView):
     """
-        List Inventory.
+        List Item.
     """
 
-    model = InventoryModel
-    template_name = 'inventory/list_inventory.html'
-    paginate_by = 10
+    model = ItemModel
+    template_name = 'inventory/list_items.html'
+    paginate_by = 8
+    context_object_name = 'items'
+
+
+@method_decorator(login_required(login_url='accounts:login'), name='dispatch')
+class ListInventories(ListView):
+    """
+        List inventories.
+    """
+
+    template_name = 'inventory/list_inventories.html'
+    paginate_by = 8
     context_object_name = 'inventories'
 
-
-class ListAllCommodities(ListView):
-    """
-        List all commodities.
-    """
-
-    model = CommoditiesModel
-    template_name = 'inventory/list_commodities.html'
-    paginate_by = 10
-    context_object_name = 'commodities'
-
-
-class ListCommodities(ListView):
-    """
-        List Commodities.
-    """
-
-    model = CommoditiesModel
-    template_name = 'inventory/list_commodities.html'
-    paginate_by = 10
-    context_object_name = 'commodities'
-
     def get_queryset(self):
-        return CommoditiesModel.objects.filter(inventory = self.kwargs['inventory_name'])
+        return InventoryModel.objects.all()[::-1]
 
 
+@method_decorator(login_required(login_url='accounts:login'), name='dispatch')
 class ListCommodity(ListView):
     """
         List Commodities.
     """
 
-    model = CommodityModel
     template_name = 'inventory/list_commodity.html'
-    paginate_by = 10
+    paginate_by = 8
     context_object_name = 'commodities'
 
     def get_queryset(self):
-        return CommodityModel.objects.filter(commodity_name = self.kwargs['commodities_id'])
+        return CommodityModel.objects.filter(item = self.kwargs['item'])[::-1]
 
 
+@method_decorator(login_required(login_url='accounts:login'), name='dispatch')
+class ListInventoryCommodity(ListView):
+    """
+        List Inventory Commodities.
+    """
+
+    template_name = 'inventory/list_commodity.html'
+    paginate_by = 8
+    context_object_name = 'commodities'
+
+    def get_queryset(self):
+        return CommodityModel.objects.filter(inventory = self.kwargs['id'])[::-1]
+
+
+@method_decorator(login_required(login_url='accounts:login'), name='dispatch')
+class ListDepartment(ListView):
+    template_name = 'inventory/list_department.html'
+    paginate_by = 8
+    context_object_name = 'departments'
+
+    def get_queryset(self):
+        return Department.objects.all()[::-1]
+
+
+@method_decorator(login_required(login_url='accounts:login'), name='dispatch')
 class FunctionalCommodity(ListView):
     model = CommodityModel
     template_name = 'inventory/item_status.html'
-    paginate_by = 10
+    paginate_by = 8
     context_object_name = 'commodities'
 
     def get_queryset(self):
-        return CommodityModel.objects.filter(status = 'functional')
+        return CommodityModel.objects.filter(status = 'Functional')[::-1]
 
 
+@method_decorator(login_required(login_url='accounts:login'), name='dispatch')
 class NonFunctionalCommodity(ListView):
     model = CommodityModel
     template_name = 'inventory/item_status.html'
-    paginate_by = 10
+    paginate_by = 8
     context_object_name = 'commodities'
 
     def get_queryset(self):
-        return CommodityModel.objects.filter(status = 'nonfunctional')
+        return CommodityModel.objects.filter(status = 'Non-Functional')[::-1]
 
 
-class Alerts(ListView):
-    pass 
+@method_decorator(login_required(login_url='accounts:login'), name='dispatch')
+class CreateItem(SuccessMessageMixin, CreateView):
+    """
+        Create Item.
+    """
+
+    template_name = 'inventory/add_item.html'
+    success_url = reverse_lazy('items')
+    form_class = ItemForm
+    success_message = 'Item Added.'
 
 
+@method_decorator(login_required(login_url='accounts:login'), name='dispatch')
 class CreateInventory(SuccessMessageMixin, CreateView):
     """
         Create Inventory.
     """
 
     template_name = 'inventory/add_inventory.html'
-    success_url = reverse_lazy('list-inventory')
-    form_class = InventoryForm
-    success_message = 'Inventory Added.'
+    form_class = AddInventoryForm
+    success_message = 'Added Inventory.'
+
+    def get_success_url(self) -> str:
+        return reverse_lazy('inventories')
 
 
-class CreateCommodities(SuccessMessageMixin, CreateView):
-    """
-        Create Commodities.
-    """
-
-    template_name = 'inventory/add_commodities.html'
-    form_class = AddCommoditiesForm
-    success_url = reverse_lazy('add-commodities')
-    success_message = 'Added Commodities.'
-
-
+@method_decorator(login_required(login_url='accounts:login'), name='dispatch')
 class CreateCommodity(SuccessMessageMixin, CreateView):
     """
         Create Commodity.
@@ -112,45 +131,63 @@ class CreateCommodity(SuccessMessageMixin, CreateView):
 
     template_name = 'inventory/add_commodity.html'
     form_class = CommodityForm
-    success_url = reverse_lazy('add-commodity')
     success_message = 'Added Commodity.'
 
     def form_valid(self, form):
-        instance = CommoditiesModel.objects.get(
-            pk = form.cleaned_data['commodity_name'].pk
+        inventory = InventoryModel.objects.get(id = form.cleaned_data['inventory'].id)
+
+        if inventory.quantity <= inventory.get_assigned:
+            messages.info(self.request, 'All inventories already assigned.')
+            return render(self.request, 'inventory/add_commodity.html', {'form': form})
+        
+        instance = ItemModel.objects.get(
+            name = inventory.item
         )
 
-        if instance.total_assigned == instance.quantity:
-            messages.info(self.request, 'All commodity already assigned.')
-            return render(self.request, 'add_commodity.html', {'form': form})
+        if instance.get_assigned >= instance.get_quantity:
+            messages.info(self.request, 'All items already assigned.')
+            return render(self.request, 'inventory/add_commodity.html', {'form': form})
 
         return super().form_valid(form)
+    
+    def get_success_url(self) -> str:
+        return reverse_lazy('commodity', kwargs = {'item': self.object.item})
 
 
-class UpdateInventory(SuccessMessageMixin, UpdateView):
+@method_decorator(login_required(login_url='accounts:login'), name='dispatch')
+class CreateDepartment(SuccessMessageMixin, CreateView):
+    model = Department
+    template_name = 'inventory/add_department.html'
+    form_class = DepartmentForm
+    success_url = reverse_lazy('departments')
+    success_message = 'Department Created.'
+
+
+@method_decorator(login_required(login_url='accounts:login'), name='dispatch')
+class UpdateItem(SuccessMessageMixin, UpdateView):
     """
-        Update Inventory.
+        Update Item.
     """
 
-    model = InventoryModel
-    template_name = 'inventory/update_inventory.html'
-    form_class = InventoryForm
-    success_url = reverse_lazy('inventories')
-    success_message = 'Inventory Updated'
+    model = ItemModel
+    template_name = 'inventory/update_item.html'
+    form_class = ItemForm
+    success_url = reverse_lazy('items')
+    success_message = 'Item Updated'
 
     def get(self, request, *args, **kwargs):
         try:
             self.get_object()
-        except InventoryModel.DoesNotExist:
-            messages.info(request, 'Commodity does not exists.')
-            return redirect('inventories')
-
+        except ItemModel.DoesNotExist:
+            messages.info(request, 'Item does not exists.')
+            return redirect('items')
         return super().get(request, *args, **kwargs)
 
     def get_object(self, queryset=None):
-        return InventoryModel.objects.get(name = self.kwargs['name'])
+        return ItemModel.objects.get(name = self.kwargs['item'])
 
 
+@method_decorator(login_required(login_url='accounts:login'), name='dispatch')
 class UpdateCommodity(SuccessMessageMixin, UpdateView):
     """
         Update Commodity.
@@ -166,84 +203,89 @@ class UpdateCommodity(SuccessMessageMixin, UpdateView):
             self.get_object()
         except CommodityModel.DoesNotExist:
             messages.info(request, 'Commodity does not exists.')
-            return redirect(f'inventory/{kwargs.get("commodities_id")}/commodity/')
-
+            return redirect('items')
         return super().get(request, *args, **kwargs)
 
     def get_object(self, queryset=None):
         return CommodityModel.objects.get(id = self.kwargs['id'])
     
     def get_success_url(self, **kwargs):
-        return redirect(f'inventory/{kwargs.get("commodities_id")}/commodity/')
+        return reverse_lazy('commodity', kwargs={'item': self.object.item})
 
 
-class UpdateCommodities(SuccessMessageMixin, UpdateView):
+@method_decorator(login_required(login_url='accounts:login'), name='dispatch')
+class UpdateInventory(SuccessMessageMixin, UpdateView):
     """
-        Update Commodities.
+        Update Inventory.
     """
 
-    model = CommoditiesModel
-    template_name = 'inventory/update_commodity.html'
-    form_class = UpdateCommoditiesForm
-    success_message = 'Commodities Updated'
+    model = InventoryModel
+    template_name = 'inventory/update_inventory.html'
+    form_class = UpdateInventoryForm
+    success_message = 'Inventory Updated'
 
     def get(self, request, *args, **kwargs):
         try:
             self.get_object()
-        except CommodityModel.DoesNotExist:
-            messages.info(request, 'Commodity does not exists.')
-            return redirect(f'inventory/{kwargs.get("inventory_name")}/commodities/')
-
+        except InventoryModel.DoesNotExist:
+            messages.info(request, 'Inventory does not exists.')
+            return redirect('inventories')
         return super().get(request, *args, **kwargs)
     
-    def get_success_url(self, **kwargs):
-        return redirect(f'inventory/{kwargs.get("inventory_name")}/commodities/')
+    def get_success_url(self):
+        return reverse_lazy('inventories')
 
 
-class DetailCommodities(DetailView):
+@method_decorator(login_required(login_url='accounts:login'), name='dispatch')
+class UpdateDepartment(SuccessMessageMixin, UpdateView):
     """
-        Detail Commodities.
+        Update Department.
     """
 
-    model = CommoditiesModel
-    template_name = 'inventory/detail_commodities.html'
-    context_object_name = 'commodities'
+    model = Department
+    template_name = 'inventory/update_department.html'
+    form_class = DepartmentForm
+    success_url = reverse_lazy('departments')
+    success_message = 'Department updated.'
 
     def get(self, request, *args, **kwargs):
         try:
             self.get_object()
-        except CommodityModel.DoesNotExist:
-            messages.info(request, 'Commodity does not exists.')
-            return redirect(f'inventory/{kwargs.get("inventory_name")}/commodities/')
-
+        except Department.DoesNotExist:
+            messages.info(request, 'Department does not exists.')
+            return redirect('departments')
+        
         return super().get(request, *args, **kwargs)
-    
-    def get_success_url(self, **kwargs):
-        return redirect(f'inventory/{kwargs.get("inventory_name")}/commodities/')
+
+    def get_object(self):
+        return Department.objects.get(name = self.kwargs['name'])
 
 
-class DetailCommodity(DetailView):
+@method_decorator(login_required(login_url='accounts:login'), name='dispatch')
+class DeleteItem(SuccessMessageMixin, DeleteView):
     """
-        Detail Commodity.
+        Delete Item.
     """
 
-    model = CommodityModel
-    template_name = 'inventory/detail_commodity.html'
-    context_object_name = 'commodity'
+    template_name = "inventory/delete_item.html"
+    model = ItemModel
+    context_object_name = 'item'
+    success_message = 'Item Deleted.'
+    success_url = reverse_lazy('items')
 
     def get(self, request, *args, **kwargs):
         try:
             self.get_object()
-        except CommodityModel.DoesNotExist:
-            messages.info(request, 'Commodity does not exists.')
-            return redirect(f'inventory/{kwargs.get("commodities_id")}/commodity/')
-
+        except ItemModel.DoesNotExist:
+            messages.info(request, 'Item does not exists.')
+            return redirect('items')
         return super().get(request, *args, **kwargs)
 
     def get_object(self, queryset=None):
-        return CommodityModel.objects.get(id = self.kwargs['id'])
+        return ItemModel.objects.get(name = self.kwargs['item'])
 
-    
+
+@method_decorator(login_required(login_url='accounts:login'), name='dispatch')
 class DeleteInventory(SuccessMessageMixin, DeleteView):
     """
         Delete Inventory.
@@ -258,24 +300,15 @@ class DeleteInventory(SuccessMessageMixin, DeleteView):
         try:
             self.get_object()
         except InventoryModel.DoesNotExist:
-            messages.info(request, 'Commodity does not exists.')
+            messages.info(request, 'Inventory does not exists.')
             return redirect('inventories')
-
         return super().get(request, *args, **kwargs)
 
-    def get_object(self, queryset=None):
-        return InventoryModel.objects.get(name = self.kwargs['name'])
+    def get_success_url(self) -> str:
+        return reverse_lazy('inventories')
 
-class DeleteCommodities(SuccessMessageMixin, DeleteView):
-    """
-        Delete Commodities.
-    """
 
-    template_name = "inventory/delete_commodities.html"
-    model = CommoditiesModel
-    context_object_name = 'item'
-    success_message = 'Commodities Deleted.'
-
+@method_decorator(login_required(login_url='accounts:login'), name='dispatch')
 class DeleteCommodity(SuccessMessageMixin, DeleteView):
     """
         Delete Commodity.
@@ -291,9 +324,135 @@ class DeleteCommodity(SuccessMessageMixin, DeleteView):
             self.get_object()
         except CommodityModel.DoesNotExist:
             messages.info(request, 'Commodity does not exists.')
-            return redirect(f'inventory/{kwargs.get("commodities_id")}/commodity/')
-
+            return redirect('items')
         return super().get(request, *args, **kwargs)
 
     def get_object(self, queryset=None):
         return CommodityModel.objects.get(id = self.kwargs['id'])
+    
+    def get_success_url(self) -> str:
+        return reverse_lazy('commodity', kwargs = {'item': self.object.item})
+
+
+@method_decorator(login_required(login_url='accounts:login'), name='dispatch')
+class DeleteDepartment(SuccessMessageMixin, DeleteView):
+    """
+        Delete Department.
+    """
+
+    template_name = 'inventory/delete_department.html'
+    context_object_name = 'item'
+    success_url = reverse_lazy('departments')
+    success_message = 'Department Deleted.'
+
+    def get(self, request, *args, **kwargs):
+        try:
+            self.get_object()
+        except:
+            messages.info(request, 'Department does not exist.')
+            return redirect('departments')
+
+        return super().get(request, *args, **kwargs)
+
+    def get_object(self):
+        return Department.objects.get(name = self.kwargs['name'])
+
+
+class Alerts(ListView):
+    """
+        Alert system.
+    """
+    template_name = 'inventory/alerts.html'
+    paginate_by = 8
+    context_object_name = 'alerts'
+
+    def get_queryset(self):
+        return [item.name for item in ItemModel.objects.all() if item.get_functional_items <= 5]
+
+
+class CommoditySearch(ListView):
+    """
+        Seach Commodity.
+    """
+    template_name = 'inventory/list_commodity.html'
+    paginate_by = 8
+    context_object_name = 'commodities'
+
+    def get_queryset(self):
+        search = self.request.GET['search']
+
+        return CommodityModel.objects.filter(
+            Q(id__icontains = search) | Q(assign_to__icontains = search) |
+            Q(item__name__icontains = search) | Q(department__name__icontains = search) |
+            Q(status__icontains = search)
+        )
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['search'] = self.request.GET['search']
+        return context
+
+
+class ItemSearch(ListView):
+    """
+        Item search.
+    """
+    template_name = 'inventory/list_items.html'
+    paginate_by = 8
+    context_object_name = 'items'
+
+    def get_queryset(self):
+        search = self.request.GET['search']
+
+        return ItemModel.objects.filter(
+            Q(name__icontains = search) | Q(depreciation_percent__icontains = search)
+        )
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['search'] = self.request.GET['search']
+        return context
+
+
+class InventorySearch(ListView):
+    """
+        Search Inventory.
+    """
+    template_name = 'inventory/list_inventories.html'
+    paginate_by = 8
+    context_object_name = 'inventories'
+
+    def get_queryset(self):
+        search = self.request.GET['search']
+
+        return InventoryModel.objects.filter(
+            Q(quantity__icontains = search) | Q(price__icontains = search) |
+            Q(current_price__icontains = search) | Q(buy_date__icontains = search) |
+            Q(item__name__icontains = search)
+        )
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['search'] = self.request.GET['search']
+        return context
+
+
+class DepartmentSearch(ListView):
+    """
+        Search Department.
+    """
+    template_name = 'inventory/list_department.html'
+    paginate_by = 8
+    context_object_name = 'department'
+
+    def get_queryset(self):
+        search = self.request.GET['search']
+
+        return Department.objects.filter(
+            Q(name__icontains = search)
+        )
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['search'] = self.request.GET['search']
+        return context

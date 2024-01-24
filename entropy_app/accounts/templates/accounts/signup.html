@@ -3,13 +3,13 @@
 {% block content %}
 
 <div class="h-100 d-flex align-items-center">
-    <div class="container">
+    <div class="container mt-3">
 
         <h3 class="text-center">{% block header %}Sign Up{% endblock %}</h3>
 
         {% if messages %}
             {% for message in messages %}
-                <div class="alert bg-primary">{{message}}</div>
+                <div class="alert bg-info">{{message}}</div>
             {% endfor %}
         {% endif %}
         

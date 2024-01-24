@@ -1,0 +1,13 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+
+<div class="container border border-secondary rounded mt-5" style="height: 80%;">
+    {% for alert in alerts %}
+    <div class="alert alert-warning m-3" role="alert">
+        {{alert}}
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

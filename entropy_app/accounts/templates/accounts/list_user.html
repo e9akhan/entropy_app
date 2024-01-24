@@ -1,0 +1,54 @@
+{% extends 'inventory/base2.html' %}
+
+{% block app_content %}
+
+<div class="row container-box p-2">
+    <div class="col-9">
+      <form action="{% url 'accounts:user_search' %}">
+        <input type="text" class="form-control" placeholder="Search" name="search">
+      </form>
+    </div>
+  
+    {% if request.user.is_superuser %}
+        <div class="col-3 position-relative">
+            <div class="position-absolute end-0">
+            <a href="{% url 'accounts:signup' %}" class="btn btn-success add-button">Add Member</a>
+            </div>
+        </div>
+    {% endif %}
+  </div>
+
+<div class="container border border-secondary rounded" style="height: 80%;">
+    <table class="table text-center info-table">
+        <thead>
+            <th>User</th>
+            <th>Status</th>
+            <th>Action</th>
+        </thead>
+
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{user.get_full_name}}</td>
+                    <td>
+                        {% if user.is_superuser %}
+                            Admin 
+                        {% else %}
+                            Staff
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if request.user == user or request.user.is_superuser %}
+                            <a href="{% url 'accounts:update-user' user.pk %}" class="btn btn-success buttons">Edit</a>
+                            <a href = "{% url 'accounts:delete-user' user.pk %}" class="btn btn-danger buttons">Delete</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    
+</div>
+
+{% endblock %}

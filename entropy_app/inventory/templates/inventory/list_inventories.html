@@ -1,0 +1,51 @@
+{% extends 'inventory/base2.html' %}
+
+{% block app_content %}
+
+<div class="row container-box p-2">
+  <div class="col-9">
+    <form action="{% url 'inventory_search' %}">
+      <input type="text" class="form-control" placeholder="Search" name="search">
+    </form>
+  </div>
+
+  <div class="col-3 position-relative">
+    <div class="position-absolute end-0">
+      <a href="{% url 'add-inventory' %}" class="btn btn-success add-button">Add Inventory</a>
+    </div>
+  </div>
+</div>
+
+<div class="container border border-secondary rounded" style="height: 80%;">
+    <table class="table text-center info-table">
+        <thead>
+          <tr>
+            <th scope="col">Inventory</th>
+            <th scope="col">Price</th>
+            <th scope="col">Current Price</th>
+            <th scope="col">Buy Date</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Assigned</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for inventory in inventories %}
+          <tr>
+            <td><a href="/inventory/inventories/{{inventory.id}}/commodity/">{{inventory}}</a></td>
+            <td>{{inventory.price}}</td>
+            <td>{{inventory.current_price}}</td>
+            <td>{{inventory.buy_date}}</td>
+            <td>{{inventory.quantity}}</td>
+            <td>{{inventory.get_assigned}}</td>
+            <td>
+              <a href="{% url 'update-inventory' inventory.id %}" class="btn btn-success buttons">Edit</a>
+              <a href="{% url 'delete-inventory' inventory.id %}" class="btn btn-danger buttons">Delete</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

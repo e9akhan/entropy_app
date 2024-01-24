@@ -1,8 +1,8 @@
 from django import forms
-from inventory.models import InventoryModel, CommoditiesModel, CommodityModel, Department
+from inventory.models import InventoryModel, ItemModel, CommodityModel, Department
 
 
-class InventoryForm(forms.ModelForm):
+class ItemForm(forms.ModelForm):
     """
         Add Inventory
     """
@@ -12,8 +12,8 @@ class InventoryForm(forms.ModelForm):
             Meta class for inventory.
         """
 
-        model = InventoryModel
-        fields = '__all__'
+        model = ItemModel
+        fields = ('name', 'depreciation_percent')
 
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -21,23 +21,20 @@ class InventoryForm(forms.ModelForm):
         }
 
 
-class CommoditiesForm(forms.ModelForm):
+class InventoryForm(forms.ModelForm):
     """
         Commodities.
     """
 
-    inventory = forms.ModelChoiceField(queryset = InventoryModel.objects.all(), empty_label='Add Inventory name')
-    department = forms.ModelChoiceField(queryset = Department.objects.all(), empty_label='Add Department')
-
-    inventory.widget.attrs.update({'class': 'form-control'})
-    department.widget.attrs.update({'class': 'form-control'})
+    item = forms.ModelChoiceField(queryset = ItemModel.objects.all(), empty_label='Add Inventory name')
+    item.widget.attrs.update({'class': 'form-control'})
 
     class Meta:
         """
-            Meta class for commodities.
+            Meta class for inventories.
         """
 
-        model = CommoditiesModel
+        model = InventoryModel
         fields = '__all__'
         exclude = ('current_price', 'total_assigned')
 
@@ -49,9 +46,9 @@ class CommoditiesForm(forms.ModelForm):
         }
 
 
-class AddCommoditiesForm(CommoditiesForm):
+class AddInventoryForm(InventoryForm):
     """
-        Add commodities.
+        Add inventory.
     """
 
     def __init__(self, **kwargs):
@@ -65,16 +62,23 @@ class AddCommoditiesForm(CommoditiesForm):
         return instance
     
 
-class UpdateCommoditiesForm(CommoditiesForm):
+class UpdateInventoryForm(InventoryForm):
+    """
+        Update Inventory Form.
+    """
     pass
 
 
 class CommodityForm(forms.ModelForm):
-    commodity_name = forms.ModelChoiceField(queryset = CommoditiesModel.objects.all(), empty_label='Add Commodity name')
-    commodity_name.widget.attrs.update({'class': 'form-control'})
     """
         Commodity Form.
     """
+
+    department = forms.ModelChoiceField(queryset = Department.objects.all(), empty_label='Add Department')
+    inventory = forms.ModelChoiceField(queryset = InventoryModel.objects.all(), empty_label='Add Inventory name')
+
+    inventory.widget.attrs.update({'class': 'form-control'})
+    department.widget.attrs.update({'class': 'form-control'})
 
     class Meta:
         """
@@ -83,8 +87,28 @@ class CommodityForm(forms.ModelForm):
 
         model = CommodityModel
         fields = '__all__'
+        exclude = ('item',)
 
         widgets = {
             'id': forms.TextInput(attrs={'class': 'form-control'}),
-            'assign_to': forms.TextInput(attrs={'class': 'form-control'})
+            'assign_to': forms.TextInput(attrs={'class': 'form-control'}),
+            'status': forms.Select(attrs={'class': 'form-control'})
+        }
+
+
+class DepartmentForm(forms.ModelForm):
+    """
+        Department Form.
+    """
+
+    class Meta:
+        """
+            Meta class for department form.
+        """
+
+        model = Department
+        fields = '__all__'
+
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'})
         }

@@ -1,17 +1,15 @@
-{% extends 'inventory/base.html' %}
+{% extends 'inventory/base2.html' %}
 
-{% block content %}
+{% block app_content %}
 
-<div class="container-box p-2">
-  <div class="position-relative">
-      <div class="position-absolute top-0 end-0">
-          <a href="{% url 'add-commodity' %}" class="btn btn-outline-success">Add Commodity</a>
-      </div>
-  </div>
+<div class="container p-2">
+  <form action="{% url 'commodity_search' %}">
+    <input type="text" placeholder="Search" class="form-control" name="search">
+  </form>
 </div>
 
-<div class="container m-2 border border-secondary rounded">
-    <table class="table text-center">
+<div class="container border border-secondary rounded" style="height: 86%;">
+    <table class="table text-center info-table">
         <thead>
           <tr>
             <th scope="col">Commodity Id</th>
@@ -26,15 +24,15 @@
         <tbody>
           {% for commodity in commodities %}
           <tr>
-            <th><a href="/inventory/detail-commodity/{{commodity.id}}/">{{commodity.id}}</a></th>
-            <td>{{commodity.commodity_name.department.name}}</td>
+            <td>{{commodity.id}}</td>
+            <td>{{commodity.department.name}}</td>
             <td>{{commodity.assign_to}}</td>
-            <td>{{commodity.commodity_name.price}}</td>
-            <td>{{commodity.commodity_name.current_price}}</td>
+            <td>{{commodity.inventory.price}}</td>
+            <td>{{commodity.inventory.current_price}}</td>
             <td>{{commodity.status}}</td>
             <td>
-                <button class="btn btn-success">Edit</button>
-                <button class="btn btn-danger">Delete</button>
+              <a href="{% url 'update-commodity' commodity.id %}" class="btn btn-success buttons">Edit</a>
+              <a href="{% url 'delete-commodity' commodity.id %}" class="btn btn-danger buttons">Delete</a>
             </td>
           </tr>
           {% endfor %}

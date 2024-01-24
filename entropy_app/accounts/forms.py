@@ -3,6 +3,26 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
 
+class UpdateUserForm(forms.ModelForm):
+    """
+        User form.
+    """
+
+    class Meta:
+        """
+            Meta class for User form.
+        """
+
+        model = User
+        fields = ('email', 'first_name', 'last_name')
+
+        widgets = {
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+
 class UserForm(UserCreationForm):
     """
         User form.
@@ -10,7 +30,9 @@ class UserForm(UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for field in self.fields.values():
+        for key, field in self.fields.items():
+            if key=='admin':
+                continue
             field.widget.attrs['class'] = 'form-control'
 
     class Meta:
@@ -19,34 +41,20 @@ class UserForm(UserCreationForm):
         """
 
         model = User
-        fields = ('username', 'email')
+        fields = ('username', 'email', 'first_name', 'last_name')
 
-        widgets = {
-            'username': forms.TextInput(attrs={'class': 'form-control'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control'})
-        }
+    admin = forms.BooleanField(required=False)
 
-# class LoginForm(forms.Form):
-#     """
-#         Login Form.
-#     """
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.is_superuser = self.cleaned_data['admin']
 
-#     username = forms.CharField(max_length=20)
-#     password = forms.CharField(
-#         max_length=20,
-#         widget=forms.PasswordInput,
-#         help_text="Password must be of only 8 characters."
-#     )
-
-#     username.widget.attrs.update({'class': 'form-control'})
-#     password.widget.attrs.update({'class': 'form-control'})
-
-
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
+        if commit:
+            user.save()
+        return user
         
 
-class UserAuthenticatioForm(AuthenticationForm):
+class UserAuthenticationForm(AuthenticationForm):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
