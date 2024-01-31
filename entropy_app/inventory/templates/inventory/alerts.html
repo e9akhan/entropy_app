@@ -1,11 +1,12 @@
-{% extends 'inventory/base.html' %}
+{% extends 'inventory/base2.html' %}
 
 {% block content %}
 
 <div class="container border border-secondary rounded mt-5" style="height: 80%;">
     {% for alert in alerts %}
-    <div class="alert alert-warning m-3" role="alert">
-        {{alert}}
+    <div class="alert alert-warning m-3 p-2 d-flex justify-content-between align-items-center" role="alert">
+        <p>{{alert.name}}</p>
+        <p>{{alert.get_remaining_items}} items remaining</p>
     </div>
     {% endfor %}
 </div>

@@ -1,53 +1,83 @@
-from django.urls import path
-from inventory.views import (ListInventories, CreateInventory, CreateItem, CreateCommodity,
-    UpdateCommodity, UpdateItem, ListCommodity, UpdateInventory, ListItem, ListInventoryCommodity,
-    DeleteInventory, DeleteItem, DeleteCommodity, NonFunctionalCommodity, FunctionalCommodity,
-    Alerts, CommoditySearch, ItemSearch, InventorySearch, ListDepartment, CreateDepartment,
-    UpdateDepartment, DeleteDepartment, DepartmentSearch)
-from inventory.api.views import (inventories_api, inventories_api_with_pk, items_api, items_api_with_name,
-                       department_api, department_api_with_name, commodity_api, commodity_api_with_id)
+"""
+    Module name :- urls
+"""
 
+from django.urls import path
+from inventory.views import (
+    ListNomeclature,
+    ListRecords,
+    ListDepartment,
+    CreateNomenclature,
+    CreateRecord,
+    CreateDepartment,
+    CreateAssignedItem,
+    UpdateNomenclature,
+    UpdateRecord,
+    UpdateDepartment,
+    UpdateAssignedItem,
+    DeleteNomenclature,
+    DeleteRecord,
+    DeleteDepartment,
+    DeleteAssignItem,
+    NomenclatureSearch,
+    RecordSearch,
+    DepartmentSearch,
+    ItemSearch,
+    ListItems,
+    get_id_for_nomenclature,
+    Alerts,
+)
+
+
+app_name = "inventory"
 
 urlpatterns = [
-    path('api/items/', items_api),
-    path('api/items/<str:name>/', items_api_with_name),
-
-    path('api/inventories/', inventories_api),
-    path('api/inventories/<int:pk>/', inventories_api_with_pk),
-
-    path('api/departments/', department_api),
-    path('api/departments/<str:name>', department_api_with_name),
-
-    path('api/commodity/', commodity_api),
-    path('api/commodity/<str:id>/', commodity_api_with_id),
-
-    path('items/', ListItem.as_view(), name='items'),
-    path('inventories/', ListInventories.as_view(), name='inventories'),
-    path('departments/', ListDepartment.as_view(), name='departments'),
-    path('<str:item>/commodity/', ListCommodity.as_view(), name='commodity'),
-    path('inventories/<int:id>/commodity/', ListInventoryCommodity.as_view(), name='commodity'),
-
-    path('add-item/', CreateItem.as_view(), name='add-item'),
-    path('add-inventory/', CreateInventory.as_view(), name='add-inventory'),
-    path('add-department/', CreateDepartment.as_view(), name='add-department'),
-    path('add-commodity/', CreateCommodity.as_view(), name='add-commodity'),
-
-    path('update-item/<str:item>/', UpdateItem.as_view(), name='update-item'),
-    path('update-inventory/<int:pk>/', UpdateInventory.as_view(), name='update-inventory'),
-    path('update-department/<str:name>/', UpdateDepartment.as_view(), name='update-department'),
-    path('update-commodity/<str:id>/', UpdateCommodity.as_view(), name='update-commodity'),
-
-    path('delete-item/<str:item>/', DeleteItem.as_view(), name='delete-item'),
-    path('delete-inventory/<int:pk>/', DeleteInventory.as_view(), name='delete-inventory'),
-    path('delete-department/<str:name>/', DeleteDepartment.as_view(), name='delete-department'),
-    path('delete-commodity/<str:id>/', DeleteCommodity.as_view(), name='delete-commodity'),
-
-    path('non-functional-items/', NonFunctionalCommodity.as_view(), name='non-functional-items'),
-    path('functional-items/', FunctionalCommodity.as_view(), name='functional-items'),
-    path('alert/', Alerts.as_view(), name='alerts'),
-
-    path('search/commodity', CommoditySearch.as_view(), name='commodity_search'),
-    path('search/item', ItemSearch.as_view(), name='item_search'),
-    path('search/inventory', InventorySearch.as_view(), name='inventory_search'),
-    path('search/department', DepartmentSearch.as_view(), name='department_search'),
+    path("", ListNomeclature.as_view(), name="nomenclatures"),
+    path("records/", ListRecords.as_view(), name="records"),
+    path("departments/", ListDepartment.as_view(), name="departments"),
+    path("all_items/", ListItems.as_view(), name="list-items"),
+    path("add-nomenclature/", CreateNomenclature.as_view(), name="add-nomenclature"),
+    path("add-record/", CreateRecord.as_view(), name="add-record"),
+    path("add-department/", CreateDepartment.as_view(), name="add-department"),
+    path("add-assign-item/", CreateAssignedItem.as_view(), name="add-assign-item"),
+    path(
+        "update-nomenclature/<str:nomenclature>/",
+        UpdateNomenclature.as_view(),
+        name="update-nomenclature",
+    ),
+    path("update-record/<int:pk>/", UpdateRecord.as_view(), name="update-record"),
+    path(
+        "update-department/<str:name>/",
+        UpdateDepartment.as_view(),
+        name="update-department",
+    ),
+    path(
+        "update-assign-item/<int:pk>/",
+        UpdateAssignedItem.as_view(),
+        name="update-assign-item",
+    ),
+    path(
+        "delete-nomenclature/<str:nomenclature>/",
+        DeleteNomenclature.as_view(),
+        name="delete-nomenclature",
+    ),
+    path("delete-record/<int:pk>/", DeleteRecord.as_view(), name="delete-record"),
+    path(
+        "delete-department/<str:name>/",
+        DeleteDepartment.as_view(),
+        name="delete-department",
+    ),
+    path(
+        "delete-assign-item/<int:pk>/",
+        DeleteAssignItem.as_view(),
+        name="delete-assign-item",
+    ),
+    path("alert/", Alerts.as_view(), name="alerts"),
+    path("search/item", ItemSearch.as_view(), name="item_search"),
+    path(
+        "search/nomenclature", NomenclatureSearch.as_view(), name="nomenclature_search"
+    ),
+    path("search/record", RecordSearch.as_view(), name="record_search"),
+    path("search/department", DepartmentSearch.as_view(), name="department_search"),
+    path("get_ids/", get_id_for_nomenclature, name="get_ids"),
 ]

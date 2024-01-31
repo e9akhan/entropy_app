@@ -22,25 +22,28 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <div class="functional-tabs d-none">
+            <div class="functional-tabs">
               {% if request.user.is_authenticated %}
+              <li class="nav-item">
+                <a class="nav-link text-white" aria-current="page" href="{% url 'inventory:add-assign-item' %}">Assign Item</a>
+              </li>
                 <li class="nav-item">
-                  <a class="nav-link text-white" aria-current="page" href="{% url 'items' %}">Items</a>
+                  <a class="nav-link text-white" aria-current="page" href="{% url 'inventory:nomenclatures' %}">Nomenclatures</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link text-white" href="{% url 'inventories' %}">Attendance</a>
+                  <a class="nav-link text-white" href="{% url 'inventory:records' %}">Records</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link text-white" href="{% url 'departments' %}">Departments</a>
+                  <a class="nav-link text-white" href="{% url 'inventory:list-items' %}">All Items</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link text-white" href="{% url 'alerts' %}">Alerts</a>
+                  <a class="nav-link text-white" href="{% url 'inventory:departments' %}">Departments</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link text-white" href="{% url 'functional-items' %}">Functional Items</a>
+                  <a class="nav-link text-white" href="{% url 'inventory:alerts' %}">Alerts</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link text-white" href="{% url 'non-functional-items' %}">Non-Functional Items</a>
+                  <a class="nav-link text-white" href="{% url 'accounts:profiles' %}">Users</a>
                 </li>
               {% endif %}
             </div>
@@ -64,46 +67,40 @@
         <h3 class="p-2 text-center text-white">Inventory Store</h3>
 
         <div class="container-fluid mt-2 m-0">
-          <a href="{% url 'add-commodity' %}" class="btn btn-light add-button m-2">Assign Item</a>
-          <a href="{% url 'items' %}">
+          <a href="{% url 'inventory:add-assign-item' %}" class="btn btn-light m-2">Assign Item</a>
+          <a href="{% url 'inventory:nomenclatures' %}">
             <div class="d-flex justify-content-between p-3 tab">
-              <h6>Items</h6>
+              <h6>Nomenclatures</h6>
               <i class="fa fa-angle-right" aria-hidden="true"></i>
             </div>
           </a>
-          <a href="{% url 'inventories' %}">
+          <a href="{% url 'inventory:records' %}">
             <div class="d-flex justify-content-between p-3 tab">
-              <h6>Inventories</h6>
+              <h6>Records</h6>
               <i class="fa fa-angle-right" aria-hidden="true"></i>
             </div>
           </a>
-          <a href="{% url 'departments' %}">
+          <a href="{% url 'inventory:list-items' %}">
+            <div class="d-flex justify-content-between p-3 tab">
+              <h6>All Items</h6>
+              <i class="fa fa-angle-right" aria-hidden="true"></i>
+            </div>
+          </a>
+          <a href="{% url 'inventory:departments' %}">
             <div class="d-flex justify-content-between p-3 tab">
               <h6>Departments</h6>
               <i class="fa fa-angle-right" aria-hidden="true"></i>
             </div>
           </a>
-          <a href="{% url 'accounts:profiles' %}">
-            <div class="d-flex justify-content-between p-3 tab">
-              <h6>Members</h6>
-              <i class="fa fa-angle-right" aria-hidden="true"></i>
-            </div>
-          </a>
-          <a href="{% url 'alerts' %}">
+          <a href="{% url 'inventory:alerts' %}">
             <div class="d-flex justify-content-between p-3 tab">
               <h6>Alerts</h6>
               <i class="fa fa-angle-right" aria-hidden="true"></i>
             </div>
           </a>
-          <a href="{% url 'functional-items' %}">
+          <a href="{% url 'accounts:profiles' %}">
             <div class="d-flex justify-content-between p-3 tab">
-              <h6>Functional</h6>
-              <i class="fa fa-angle-right" aria-hidden="true"></i>
-            </div>
-          </a>
-          <a href="{% url 'non-functional-items' %}">
-            <div class="d-flex justify-content-between p-3 tab">
-              <h6>Non-functional</h6>
+              <h6>Users</h6>
               <i class="fa fa-angle-right" aria-hidden="true"></i>
             </div>
           </a>
@@ -130,6 +127,7 @@
     <!-- Option 1: Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="/static/js/script.js"></script>
+    <script src="/static/js/htmx.min.js" defer></script>
 
     <!-- Option 2: Separate Popper and Bootstrap JS -->
     <!--

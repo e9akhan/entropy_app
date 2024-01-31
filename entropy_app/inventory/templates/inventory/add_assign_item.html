@@ -1,0 +1,25 @@
+{% extends 'inventory/add_nomenclature.html' %}
+
+{% block header %}Assign items{% endblock %}
+
+{% block scripts %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $('#id_nomenclature').change(function(){
+            var nomenclature = $(this).val();
+            $.ajax({
+                url: '/get_ids/',  // Update the URL accordingly
+                data: {
+                    'nomenclature': nomenclature
+                },
+                success: function(data){
+                    $('#id_item_id').html(data);
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}

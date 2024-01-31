@@ -4,19 +4,19 @@
 
 <div class="container row p-2">
     <div class="col-9">
-        <form action="{% url 'department_search' %}">
+        <form action="{% url 'inventory:department_search' %}">
           <input type="text" class="form-control" placeholder="Search" name="search">
         </form>
     </div>
     
     <div class="col-3 position-relative">
         <div class="position-absolute end-0">
-          <a href="{% url 'add-department' %}" class="btn btn-success add-button">Add Department</a>
+          <a href="{% url 'inventory:add-department' %}" class="btn btn-success add-button">Add Department</a>
         </div>
     </div>
 </div>
 
-<div class="container border border-secondary rounded" style="height: 86%;">
+<div class="container border border-secondary rounded" style="height: 80%;">
     <table class="table text-center info-table">
         <thead>
           <tr>
@@ -29,8 +29,8 @@
           <tr>
             <td>{{department.name}}</td>
             <td>
-              <a href="{% url 'update-department' department.name %}" class="btn btn-success buttons">Edit</a>
-              <a href="{% url 'delete-department' department.name %}" class="btn btn-danger buttons">Delete</a>
+              <a href="{% url 'inventory:update-department' department.name %}" class="btn btn-success buttons">Edit</a>
+              <a href="{% url 'inventory:delete-department' department.name %}" class="btn btn-danger buttons">Delete</a>
             </td>
           </tr>
           {% endfor %}

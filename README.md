@@ -45,14 +45,15 @@ python manage.py shell
 
 **Create fake data**
 ```python
-from inventory.models import InventoryModel, ItemModel, Department, CommodityModel
-ItemModel.create_random_data()
-InventoryModel.create_random_inventories()
+from inventory.models import NomenclatureModel, RecordModel, Department
+
+NomenclatureModel.create_random_data()
+RecordModel.create_random_records()
 Department.create_random_departments()
-CommodityModel.create_random_commodities()
+quit()
 ```
 
-**Create superuser**
+**Create Superuser**
 ```python
 python manage.py createsuperuser
 ```

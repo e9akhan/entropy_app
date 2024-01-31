@@ -1,0 +1,49 @@
+{% extends 'inventory/base2.html' %}
+
+{% block app_content %}
+
+<div class="row container-box p-2">
+  <div class="col-9">
+    <form action="{% url 'inventory:record_search' %}">
+      <input type="text" class="form-control" placeholder="Search" name="search">
+    </form>
+  </div>
+
+  <div class="col-3 position-relative">
+    <div class="position-absolute end-0">
+      <a href="{% url 'inventory:add-record' %}" class="btn btn-success add-button">Add Record</a>
+    </div>
+  </div>
+</div>
+
+<div class="container border border-secondary rounded" style="height: 80%;">
+    <table class="table text-center info-table">
+        <thead>
+          <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Item</th>
+            <th scope="col">Price</th>
+            <th scope="col">Buy Date</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for record in records %}
+          <tr>
+            <td>{{record}}</td>
+            <td>{{record.nomenclature}}</td>
+            <td>{{record.price}}</td>
+            <td>{{record.buy_date}}</td>
+            <td>{{record.quantity}}</td>
+            <td>
+              <a href="{% url 'inventory:update-record' record.id %}" class="btn btn-success buttons">Edit</a>
+              <a href="{% url 'inventory:delete-record' record.id %}" class="btn btn-danger buttons">Delete</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

@@ -1,114 +1,92 @@
 from django import forms
-from inventory.models import InventoryModel, ItemModel, CommodityModel, Department
+from inventory.models import NomenclatureModel, RecordModel, Department, AssignItemModel
 
 
-class ItemForm(forms.ModelForm):
+class NomenclatureForm(forms.ModelForm):
     """
-        Add Inventory
+    Add Nomenclature
     """
 
     class Meta:
         """
-            Meta class for inventory.
+        Meta class for nomenclature.
         """
 
-        model = ItemModel
-        fields = ('name', 'depreciation_percent')
+        model = NomenclatureModel
+        fields = ("name",)
 
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'depreciation_percent': forms.TextInput(attrs={'class': 'form-control'})
+            "name": forms.TextInput(attrs={"class": "form-control"}),
         }
 
 
-class InventoryForm(forms.ModelForm):
+class RecordForm(forms.ModelForm):
     """
-        Commodities.
+    Record Form.
     """
 
-    item = forms.ModelChoiceField(queryset = ItemModel.objects.all(), empty_label='Add Inventory name')
-    item.widget.attrs.update({'class': 'form-control'})
+    nomenclature = forms.ModelChoiceField(
+        queryset=NomenclatureModel.objects.all(), empty_label="Add Nomenclature"
+    )
+    nomenclature.widget.attrs.update({"class": "form-select"})
 
     class Meta:
         """
-            Meta class for inventories.
+        Meta class for records.
         """
 
-        model = InventoryModel
-        fields = '__all__'
-        exclude = ('current_price', 'total_assigned')
+        model = RecordModel
+        fields = "__all__"
 
         widgets = {
-            'quantity': forms.TextInput(attrs = {'class': 'form-control'}),
-            'buy_date': forms.DateInput(attrs={'class': 'form-control'}),
-            'price': forms.TextInput(attrs={'class': 'form-control'}),
-            'status': forms.Select(attrs={'class': 'form-control'})
+            "quantity": forms.TextInput(attrs={"class": "form-control"}),
+            "buy_date": forms.DateInput(attrs={"class": "form-control"}),
+            "price": forms.TextInput(attrs={"class": "form-control"}),
         }
 
 
-class AddInventoryForm(InventoryForm):
+class AssignItemForm(forms.ModelForm):
     """
-        Add inventory.
-    """
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-    def save(self, commit=True):
-        instance = super().save(commit=False)
-        instance.current_price = instance.price
-        if commit:
-            instance.save()
-        return instance
-    
-
-class UpdateInventoryForm(InventoryForm):
-    """
-        Update Inventory Form.
-    """
-    pass
-
-
-class CommodityForm(forms.ModelForm):
-    """
-        Commodity Form.
+    Assign Item Form.
     """
 
-    department = forms.ModelChoiceField(queryset = Department.objects.all(), empty_label='Add Department')
-    inventory = forms.ModelChoiceField(queryset = InventoryModel.objects.all(), empty_label='Add Inventory name')
+    nomenclature = forms.ModelChoiceField(
+        queryset=NomenclatureModel.objects.all(), empty_label="Add Nomenclature"
+    )
+    nomenclature.widget.attrs.update({"class": "form-select"})
 
-    inventory.widget.attrs.update({'class': 'form-control'})
-    department.widget.attrs.update({'class': 'form-control'})
+    department = forms.ModelChoiceField(
+        queryset=Department.objects.all(), empty_label="Add Department"
+    )
+    department.widget.attrs.update({"class": "form-select"})
 
     class Meta:
         """
-            Meta class for commodity form.
+        Meta class for assign item form.
         """
 
-        model = CommodityModel
-        fields = '__all__'
-        exclude = ('item',)
+        model = AssignItemModel
+        fields = "__all__"
 
         widgets = {
-            'id': forms.TextInput(attrs={'class': 'form-control'}),
-            'assign_to': forms.TextInput(attrs={'class': 'form-control'}),
-            'status': forms.Select(attrs={'class': 'form-control'})
+            "assign_to": forms.TextInput(attrs={"class": "form-control"}),
+            "item_id": forms.Select(attrs={"class": "form-select"}),
+            "status": forms.Select(attrs={"class": "form-select"}),
+            "functionality": forms.Select(attrs={"class": "form-select"}),
         }
 
 
 class DepartmentForm(forms.ModelForm):
     """
-        Department Form.
+    Department Form.
     """
 
     class Meta:
         """
-            Meta class for department form.
+        Meta class for department form.
         """
 
         model = Department
-        fields = '__all__'
+        fields = "__all__"
 
-        widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'})
-        }
+        widgets = {"name": forms.TextInput(attrs={"class": "form-control"})}

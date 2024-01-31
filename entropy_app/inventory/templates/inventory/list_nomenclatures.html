@@ -1,0 +1,48 @@
+{% extends 'inventory/base2.html' %}
+
+{% block app_content %}
+
+<div class="row container-box p-2">
+    <div class="col-9">
+      <form action="{% url 'inventory:nomenclature_search' %}">
+        <input type="text" class="form-control" placeholder="Search" name="search">
+      </form>
+    </div>
+  
+    <div class="col-3 position-relative">
+      <div class="position-absolute end-0">
+        <a href="{% url 'inventory:add-nomenclature' %}" class="btn btn-success add-button">Add Nomenclature</a>
+      </div>
+    </div>
+</div>
+
+<div class="container border border-secondary rounded" style="height: 80%;">
+    <table class="table text-center info-table">
+        <thead>
+            <th>Nomenclature</th>
+            <th>Quantity</th>
+            <th>Functional</th>
+            <th>Remaining</th>
+            <th>Action</th>
+        </thead>
+
+        <tbody>
+            {% for nomenclature in nomenclatures %}
+                <tr>
+                    <td>{{nomenclature.name}}</td>
+                    <td>{{nomenclature.get_quantity}}</td>
+                    <td>{{nomenclature.get_functional_items}}</td>
+                    <td>{{nomenclature.get_remaining_items}}</td>
+                    <td>
+                        <a href="{% url 'inventory:update-nomenclature' nomenclature.name%}" class="btn btn-success buttons">Edit</a>
+                        <a href = "{% url 'inventory:delete-nomenclature' nomenclature.name %}" class="btn btn-danger buttons">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    
+</div>
+
+{% endblock %}

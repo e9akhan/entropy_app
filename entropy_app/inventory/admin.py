@@ -1,29 +1,40 @@
 from django.contrib import admin
-from inventory.models import InventoryModel, ItemModel, Department, CommodityModel
+from inventory.models import NomenclatureModel, RecordModel, Department, AssignItemModel
+
 
 # Register your models here.
-@admin.register(InventoryModel)
-class InventoryAdmin(admin.ModelAdmin):
+@admin.register(RecordModel)
+class RecordAdmin(admin.ModelAdmin):
     """
-        Inventory for admin panel.
+    record for admin panel.
     """
-    list_display = ['id', 'price', 'current_price', 'quantity', 'buy_date']
+
+    list_display = ["id", "price", "quantity", "buy_date"]
 
 
-@admin.register(ItemModel)
-class ItemAdmin(admin.ModelAdmin):
+@admin.register(NomenclatureModel)
+class NomenclatureAdmin(admin.ModelAdmin):
     """
-        Item for admin panel.
+    Nomenclature for admin panel.
     """
-    list_display = ['name', 'depreciation_percent']
+
+    list_display = ["name"]
 
 
-@admin.register(CommodityModel)
-class CommodityAdmin(admin.ModelAdmin):
+@admin.register(AssignItemModel)
+class AssignItemAdmin(admin.ModelAdmin):
     """
-        Commodity for admin panel.
+    Commodity for admin panel.
     """
-    list_display = ['id', 'assign_to', 'department', 'inventory', 'status']
+
+    list_display = [
+        "id",
+        "assign_to",
+        "department",
+        "nomenclature",
+        "status",
+        "functionality",
+    ]
 
 
 admin.site.register(Department)
